@@ -83,7 +83,13 @@ EOF
         {
             "Effect": "Allow",
             "Action": [
-                "ecr:GetAuthorizationToken",
+                "ecr:GetAuthorizationToken"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
                 "ecr:BatchCheckLayerAvailability",
                 "ecr:GetDownloadUrlForLayer",
                 "ecr:GetRepositoryPolicy",
@@ -121,6 +127,12 @@ EOF
         aws iam create-policy \
             --policy-name GitHubActionsECRAccess \
             --policy-document file://ecr-policy.json || handle_error "Failed to create ECR policy"
+    else
+        echo "Updating ECR policy..."
+        aws iam create-policy-version \
+            --policy-arn arn:aws:iam::${AWS_ACCOUNT_ID}:policy/GitHubActionsECRAccess \
+            --policy-document file://ecr-policy.json \
+            --set-as-default || handle_error "Failed to update ECR policy"
     fi
 
     echo "Attaching ECR policy to role..."
