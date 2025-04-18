@@ -10,8 +10,7 @@ This project demonstrates a Flask application containerized with Docker and depl
 │   └── workflows/
 │       └── docker-push.yml    # GitHub Actions workflow
 ├── scripts/
-│   ├── setup-iam-role.sh      # IAM role setup script
-│   └── setup-oidc-provider.sh # OIDC provider setup script
+│   └── setup-aws.sh          # AWS setup script (OIDC & IAM)
 ├── app.py                     # Flask application
 ├── Dockerfile                 # Docker configuration
 ├── requirements.txt           # Python dependencies
@@ -27,26 +26,31 @@ This project demonstrates a Flask application containerized with Docker and depl
 
 ## Setup Instructions
 
-### 1. AWS IAM Role Setup
+### 1. AWS Setup
 
-The repository includes scripts in the `scripts` directory to set up the necessary IAM role and OIDC provider for GitHub Actions to push to ECR:
+The repository includes a menu-driven setup script in the `scripts` directory that handles both OIDC provider and IAM role configuration:
 
 ```bash
-# Make the scripts executable
-chmod +x scripts/setup-iam-role.sh
-chmod +x scripts/setup-oidc-provider.sh
+# Make the script executable
+chmod +x scripts/setup-aws.sh
 
-# Run the setup scripts
-./scripts/setup-oidc-provider.sh
-./scripts/setup-iam-role.sh
+# Run the setup script
+./scripts/setup-aws.sh
 ```
 
-These scripts will:
+The script provides the following options:
 
-- Create and configure the OIDC provider for GitHub Actions
-- Create an IAM role with trust relationship for GitHub Actions
-- Create and attach an ECR policy with necessary permissions
-- Output the Role ARN needed for the GitHub workflow
+1. Setup OIDC Provider
+2. Setup IAM Role
+3. Setup Both (OIDC Provider and IAM Role)
+4. Exit
+
+The script includes:
+
+- Error handling and validation
+- AWS CLI and credentials checks
+- Color-coded output for better visibility
+- Automatic cleanup of temporary files
 
 ### 2. GitHub Actions Workflow
 
